@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0038)file:///Users/samwu/Desktop/index.html -->
+<!-- saved from url=(0133)file:///Users/samwu/Documents/TVRM%20Reader%EF%BD%9C%E9%9B%BB%E8%85%A6%E9%A9%97%E5%85%89%E8%BE%A8%E8%AD%98_%E6%95%B4%E5%90%88OCR.html -->
 <html lang="zh-Hant"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -31,25 +31,24 @@
       <div class="small">拍攝或上傳驗光單。系統會抓取尖括號內的右眼／左眼數值，整理成 `-1.25 -0.50 165` 格式並自動填入下方 TVRM 欄位。</div>
       <div class="ocr-actions">
         <button class="btn primary" id="ocrStartCamera" type="button">開啟手機後鏡頭</button>
-        <button class="btn secondary" id="ocrCapture" type="button">拍照並辨識</button>
+        <button class="btn secondary" id="ocrCapture" type="button" disabled="">拍照並辨識</button>
         <button class="btn ghost" id="ocrStopCamera" type="button" disabled="">關閉鏡頭</button>
         <label class="btn ghost" for="ocrFile">拍照／選擇照片</label><input class="ocr-file" id="ocrFile" type="file" accept="image/*" capture="environment">
       </div>
-      <div id="ocrStatus" class="ocr-status ok">完成，已填入 TVRM 右眼／左眼。</div>
-      <div class="ocr-preview"><video id="ocrVideo" autoplay="" playsinline="" muted=""></video><img id="ocrPhoto" alt="驗光單預覽" src="blob:null/8919ca2b-cb0e-48ed-af9a-c1ed6f8f3ded" style="display: block;"><div class="ocr-guide"></div></div>
+      <div id="ocrStatus" class="ocr-status">請開啟鏡頭或選擇照片。</div>
+      <div class="ocr-preview"><video id="ocrVideo" autoplay="" playsinline="" muted=""></video><img id="ocrPhoto" alt="驗光單預覽"><div class="ocr-guide"></div></div>
       <canvas id="ocrCanvas" hidden=""></canvas>
-      <div id="ocrResult" class="ocr-result">OD: -1.25 -0.50 165
-OS: -1.75 -0.75 180</div>
+      <div id="ocrResult" class="ocr-result">尚未辨識</div>
     </section>
     <section class="card sync-card">
       <div class="result-head"><h2>手機 ↔ 電腦同步</h2><span class="confidence">只同步數值</span></div>
       <div class="small">照片只在手機本機辨識，不會透過同步功能傳送；手機只傳送 OCR 後的 TVRM／PD 數值到電腦。</div>
       <div class="sync-actions">
-        <button class="btn secondary" id="syncSend" type="button">傳送目前資料</button>
+        <button class="btn secondary" id="syncSend" type="button" disabled="">傳送目前資料</button>
         <button class="btn ghost" id="syncReconnect" type="button">重新連線</button>
         <button class="btn ghost" id="syncClear" type="button">清除本次資料</button>
       </div>
-      <div id="syncStatus" class="ocr-status ok">公開同步連線中。</div>
+      <div id="syncStatus" class="ocr-status ok">公開同步已啟動，所有開啟同一網址的人會看到即時資料。</div>
     </section>
     <section class="card">
       <div class="result-head"><h2>眼壓 PT</h2><span class="confidence">單位：mmHg</span></div>
@@ -217,7 +216,7 @@ OS: -1.75 -0.75 180</div>
     const syncFields=['odS','odC','odA','osS','osC','osA','tvrmPD','dilateODS','dilateODC','dilateODA','dilateOSS','dilateOSC','dilateOSA','rxDistancePD'];
     const DEFAULT_SYNC_PEER_ID='tvrm-public-default-room';
     const syncStatusEl=$('syncStatus'),syncSendBtn=$('syncSend');
-    let syncPeer=null,syncConnection=null,syncConnections=new Set(),seenSyncMessages=new Set(),syncRetryTimer=null;
+    let syncPeer=null,syncConnection=null,syncConnections=new Set(),seenSyncMessages=new Set(),syncRetryTimer=null,syncHeartbeatTimer=null;
     function setSyncStatus(text,kind=''){syncStatusEl.textContent=text;syncStatusEl.className=`ocr-status ${kind}`}
     function syncPayload(){const fields={};syncFields.forEach(id=>fields[id]=$(id).value.trim());const messageId=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`);seenSyncMessages.add(messageId);return {type:'tvrm-data',messageId,fields,sentAt:new Date().toISOString()}}
     function forwardSyncPayload(payload,except){syncConnections.forEach(connection=>{if(connection!==except&&connection.open)connection.send(payload)})}
@@ -239,11 +238,12 @@ OS: -1.75 -0.75 180</div>
       syncPeer.on('error',error=>setSyncStatus(`無法連接電腦：${error.type||'unknown'}`,'error'));
     }
     function sendSyncData(){if(![...syncConnections].some(connection=>connection.open)){setSyncStatus('目前尚未連線，請確認另一台裝置已開啟同一網址。','error');return}const payload=syncPayload();forwardSyncPayload(payload,null);setSyncStatus('已將目前 TVRM 資料同步給所有連線裝置。','ok')}
-    function reconnectSync(){if(syncRetryTimer)clearInterval(syncRetryTimer);syncConnections.forEach(connection=>connection.close());syncConnections.clear();if(syncPeer)syncPeer.destroy();syncPeer=null;syncConnection=null;syncSendBtn.disabled=true;const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);setSyncStatus('正在重新建立同步連線……');(isMobile?joinSyncPeer:createSyncPeer)()}
+    function startSyncHeartbeat(){clearInterval(syncHeartbeatTimer);syncHeartbeatTimer=setInterval(()=>{if([...syncConnections].some(connection=>connection.open))forwardSyncPayload(syncPayload(),null)},3000)}
+    function reconnectSync(){if(syncRetryTimer)clearInterval(syncRetryTimer);syncConnections.forEach(connection=>connection.close());syncConnections.clear();if(syncPeer)syncPeer.destroy();syncPeer=null;syncConnection=null;syncSendBtn.disabled=true;setSyncStatus('正在重新建立同步連線……');createSyncPeer()}
     function clearSyncData(){if(syncRetryTimer)clearInterval(syncRetryTimer);if([...syncConnections].some(connection=>connection.open)){const payload={type:'tvrm-clear',messageId:(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`)};seenSyncMessages.add(payload.messageId);forwardSyncPayload(payload,null)}syncFields.forEach(id=>$(id).value='');$('ocrResult').textContent='尚未辨識';$('ocrPhoto').removeAttribute('src');$('ocrPhoto').style.display='none';syncConnections.forEach(connection=>connection.close());syncConnections.clear();if(syncPeer)syncPeer.destroy();syncConnection=null;syncPeer=null;seenSyncMessages.clear();syncSendBtn.disabled=true;updateSummary();setSyncStatus('本次同步資料已清除。','ok')}
     syncFields.forEach(id=>$(id).addEventListener('input',()=>{if(syncConnections.size)forwardSyncPayload(syncPayload(),null)}));
     syncSendBtn.addEventListener('click',sendSyncData);$('syncReconnect').addEventListener('click',reconnectSync);$('syncClear').addEventListener('click',clearSyncData);
-    window.addEventListener('load',()=>{const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);(isMobile?joinSyncPeer:createSyncPeer)()});
+    window.addEventListener('load',()=>{createSyncPeer();startSyncHeartbeat()});
 
     // ── 驗光單 OCR：抓取尖括號內容並填入 TVRM OD／OS ──
     const ocrVideo=$('ocrVideo'),ocrPhoto=$('ocrPhoto'),ocrCanvas=$('ocrCanvas'),ocrStart=$('ocrStartCamera'),ocrCapture=$('ocrCapture'),ocrStop=$('ocrStopCamera'),ocrFile=$('ocrFile'),ocrStatus=$('ocrStatus'),ocrResult=$('ocrResult');
