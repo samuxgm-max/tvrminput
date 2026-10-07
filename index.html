@@ -43,10 +43,10 @@
       <div class="result-head"><h2>手機 ↔ 電腦同步</h2><span class="confidence">只同步數值</span></div>
       <div class="small">照片只在手機本機辨識，不會透過同步功能傳送；手機只傳送 OCR 後的 TVRM／PD 數值到電腦。</div>
       <div class="sync-actions">
-        <button class="btn secondary" id="syncSend" type="button" disabled="">傳送目前資料</button>
+        <button class="btn secondary" id="syncSend" type="button">傳送目前資料</button>
         <button class="btn ghost" id="syncClear" type="button">清除本次資料</button>
       </div>
-      <div id="syncStatus" class="ocr-status ok">公開同步已啟動，所有開啟同一網址的人會看到即時資料。</div>
+      <div id="syncStatus" class="ocr-status ok">公開同步連線中。</div>
     </section>
     <section class="card">
       <div class="result-head"><h2>眼壓 PT</h2><span class="confidence">單位：mmHg</span></div>
@@ -204,7 +204,7 @@
       syncPeer=new Peer(DEFAULT_SYNC_PEER_ID);
       syncPeer.on('open',()=>setSyncStatus('公開同步已啟動，所有開啟同一網址的人會看到即時資料。','ok'));
       syncPeer.on('connection',bindSyncConnection);
-      syncPeer.on('error',error=>setSyncStatus(`同步連線錯誤：${error.type||'unknown'}`,'error'));
+      syncPeer.on('error',error=>{if(error.type==='unavailable-id'){setSyncStatus('同步主機已存在，正在加入現有同步房間……','ok');if(syncPeer)syncPeer.destroy();syncPeer=null;joinSyncPeer()}else setSyncStatus(`同步連線錯誤：${error.type||'unknown'}`,'error')});
     }
     function joinSyncPeer(){
       if(!window.Peer){setSyncStatus('同步引擎尚未載入，請確認網路後重新整理。','error');return}
