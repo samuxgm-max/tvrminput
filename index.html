@@ -34,7 +34,7 @@
         <button class="btn ghost" id="ocrStopCamera" type="button" disabled="">關閉鏡頭</button>
         <label class="btn ghost" for="ocrFile">拍照／選擇照片</label><input class="ocr-file" id="ocrFile" type="file" accept="image/*" capture="environment">
       </div>
-      <div id="ocrStatus" class="ocr-status error">無法開啟鏡頭，請允許相機權限，或改按「拍照／選擇照片」。</div>
+      <div id="ocrStatus" class="ocr-status">請開啟鏡頭或選擇照片。</div>
       <div class="ocr-preview"><video id="ocrVideo" autoplay="" playsinline="" muted=""></video><img id="ocrPhoto" alt="驗光單預覽"><div class="ocr-guide"></div></div>
       <canvas id="ocrCanvas" hidden=""></canvas>
       <div id="ocrResult" class="ocr-result">尚未辨識</div>
@@ -192,7 +192,7 @@
     const syncFields=['odS','odC','odA','osS','osC','osA','dilateODS','dilateODC','dilateODA','dilateOSS','dilateOSC','dilateOSA','rxDistancePD'];
     const DEFAULT_SYNC_PEER_ID='tvrm-public-default-room';
     const syncStatusEl=$('syncStatus'),syncSendBtn=$('syncSend');
-    let syncPeer=null,syncConnection=null,syncConnections=new Set(),seenSyncMessages=new Set();
+    let syncPeer=null,syncConnection=null,syncConnections=new Set(),seenSyncMessages=new Set(),syncRetryTimer=null;
     function setSyncStatus(text,kind=''){syncStatusEl.textContent=text;syncStatusEl.className=`ocr-status ${kind}`}
     function syncPayload(){const fields={};syncFields.forEach(id=>fields[id]=$(id).value.trim());const messageId=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`);seenSyncMessages.add(messageId);return {type:'tvrm-data',messageId,fields,sentAt:new Date().toISOString()}}
     function forwardSyncPayload(payload,except){syncConnections.forEach(connection=>{if(connection!==except&&connection.open)connection.send(payload)})}
@@ -209,14 +209,15 @@
     function joinSyncPeer(){
       if(!window.Peer){setSyncStatus('同步引擎尚未載入，請確認網路後重新整理。','error');return}
       if(syncPeer)syncPeer.destroy();syncPeer=new Peer();
-      syncPeer.on('open',()=>bindSyncConnection(syncPeer.connect(DEFAULT_SYNC_PEER_ID,{reliable:true})));
+      const tryConnect=()=>{if(syncPeer&&!syncPeer.destroyed&&!([...syncConnections].some(connection=>connection.open)))bindSyncConnection(syncPeer.connect(DEFAULT_SYNC_PEER_ID,{reliable:true}))};
+      syncPeer.on('open',()=>{tryConnect();clearInterval(syncRetryTimer);syncRetryTimer=setInterval(tryConnect,3000)});
       syncPeer.on('error',error=>setSyncStatus(`無法連接電腦：${error.type||'unknown'}`,'error'));
     }
-    function sendSyncData(){if(!syncConnections.size){setSyncStatus('目前尚未連線，請確認另一台裝置已開啟同一網址。','error');return}const payload=syncPayload();forwardSyncPayload(payload,null);setSyncStatus('已將目前 TVRM 資料同步給所有連線裝置。','ok')}
-    function clearSyncData(){if(syncConnections.size){const payload={type:'tvrm-clear',messageId:(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`)};seenSyncMessages.add(payload.messageId);forwardSyncPayload(payload,null)}syncFields.forEach(id=>$(id).value='');$('ocrResult').textContent='尚未辨識';$('ocrPhoto').removeAttribute('src');$('ocrPhoto').style.display='none';syncConnections.forEach(connection=>connection.close());syncConnections.clear();if(syncPeer)syncPeer.destroy();syncConnection=null;syncPeer=null;seenSyncMessages.clear();syncSendBtn.disabled=true;updateSummary();setSyncStatus('本次同步資料已清除。','ok')}
+    function sendSyncData(){if(![...syncConnections].some(connection=>connection.open)){setSyncStatus('目前尚未連線，請確認另一台裝置已開啟同一網址。','error');return}const payload=syncPayload();forwardSyncPayload(payload,null);setSyncStatus('已將目前 TVRM 資料同步給所有連線裝置。','ok')}
+    function clearSyncData(){if(syncRetryTimer)clearInterval(syncRetryTimer);if([...syncConnections].some(connection=>connection.open)){const payload={type:'tvrm-clear',messageId:(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`)};seenSyncMessages.add(payload.messageId);forwardSyncPayload(payload,null)}syncFields.forEach(id=>$(id).value='');$('ocrResult').textContent='尚未辨識';$('ocrPhoto').removeAttribute('src');$('ocrPhoto').style.display='none';syncConnections.forEach(connection=>connection.close());syncConnections.clear();if(syncPeer)syncPeer.destroy();syncConnection=null;syncPeer=null;seenSyncMessages.clear();syncSendBtn.disabled=true;updateSummary();setSyncStatus('本次同步資料已清除。','ok')}
     syncFields.forEach(id=>$(id).addEventListener('input',()=>{if(syncConnections.size)forwardSyncPayload(syncPayload(),null)}));
     syncSendBtn.addEventListener('click',sendSyncData);$('syncClear').addEventListener('click',clearSyncData);
-    window.addEventListener('load',()=>{const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||matchMedia('(pointer:coarse)').matches;(isMobile?joinSyncPeer:createSyncPeer)()});
+    window.addEventListener('load',()=>{const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);(isMobile?joinSyncPeer:createSyncPeer)()});
 
     // ── 驗光單 OCR：抓取尖括號內容並填入 TVRM OD／OS ──
     const ocrVideo=$('ocrVideo'),ocrPhoto=$('ocrPhoto'),ocrCanvas=$('ocrCanvas'),ocrStart=$('ocrStartCamera'),ocrCapture=$('ocrCapture'),ocrStop=$('ocrStopCamera'),ocrFile=$('ocrFile'),ocrStatus=$('ocrStatus'),ocrResult=$('ocrResult');
@@ -259,9 +260,15 @@
       if(rows.length&&syncConnection&&syncConnection.open)sendSyncData();
       const lines=rows.map((r,i)=>`${i===0?'OD':'OS'}: ${r.join(' ')}`);if(pd)lines.push(`PD: ${pd}`);ocrResult.textContent=lines.length?lines.join('\n'):'沒有找到可填入的驗光數值';
     }
+    function prepareOcrSource(source){
+      const width=source.naturalWidth||source.videoWidth||source.width,height=source.naturalHeight||source.videoHeight||source.height;
+      if(!width||!height)return source;
+      const scale=Math.min(2.2,Math.max(1.35,1800/width)),canvas=document.createElement('canvas');canvas.width=Math.round(width*scale);canvas.height=Math.round(height*scale);
+      const ctx=canvas.getContext('2d');ctx.filter='grayscale(1) contrast(1.35)';ctx.drawImage(source,0,0,canvas.width,canvas.height);return canvas;
+    }
     async function runOcr(source){
       ocrCapture.disabled=true;ocrSetStatus('OCR 辨識中，第一次載入語言資料可能需要一點時間……');ocrResult.textContent='辨識中…';
-      try{if(!window.Tesseract)throw new Error('Tesseract.js 尚未載入');const result=await Tesseract.recognize(source,'eng',{logger:m=>{if(m.status)ocrSetStatus(`OCR：${m.status} ${Math.round((m.progress||0)*100)}%`)}});const text=result.data.text||'';const rows=extractRxRows(text);let pd=extractOcrPD(text);if(!pd)pd=await extractOcrPDLower(source);applyOcrRows(rows,pd);ocrSetStatus(rows.length?'完成，已填入 TVRM 右眼／左眼。':'已完成 OCR，但找不到兩組驗光度數，請讓整張驗光單清楚入鏡。',rows.length?'ok':'error')}catch(error){console.error(error);ocrSetStatus(error.message.includes('Tesseract')?'OCR 引擎尚未載入，請確認網路後重新整理。':'辨識失敗，請確認照片清晰或改用「選擇照片」。','error');ocrResult.textContent='辨識失敗'}finally{ocrCapture.disabled=!ocrStream&&!ocrImage}}
+      try{if(!window.Tesseract)throw new Error('Tesseract.js 尚未載入');const options={logger:m=>{if(m.status)ocrSetStatus(`OCR：${m.status} ${Math.round((m.progress||0)*100)}%`)},config:{tessedit_pageseg_mode:'6',preserve_interword_spaces:'1'}};let result=await Tesseract.recognize(source,'eng',options),text=result.data.text||'',rows=extractRxRows(text);if(rows.length<2){const enhanced=prepareOcrSource(source);result=await Tesseract.recognize(enhanced,'eng',options);text=result.data.text||text;rows=extractRxRows(text)}let pd=extractOcrPD(text);if(!pd)pd=await extractOcrPDLower(source);applyOcrRows(rows,pd);ocrSetStatus(rows.length?'完成，已填入 TVRM 右眼／左眼。':'已完成 OCR，但找不到兩組驗光度數，請讓整張驗光單清楚入鏡。',rows.length?'ok':'error')}catch(error){console.error(error);ocrSetStatus(error.message.includes('Tesseract')?'OCR 引擎尚未載入，請確認網路後重新整理。':'辨識失敗，請確認照片清晰或改用「拍照／選擇照片」。','error');ocrResult.textContent='辨識失敗'}finally{ocrCapture.disabled=!ocrStream&&!ocrImage}}
     async function startOcrCamera(){
       if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ocrSetStatus('此網址無法使用鏡頭，請改用 HTTPS 網址或按「拍照／選擇照片」。','error');return}
       const constraints=[{video:{facingMode:{exact:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false},{video:{facingMode:'environment'},audio:false},{video:true,audio:false}];
