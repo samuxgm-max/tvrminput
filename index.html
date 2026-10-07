@@ -235,6 +235,8 @@
         for(const m of line.matchAll(re)){const s=cleanToken(m[1]),c=cleanToken(m[2]),a=cleanToken(m[3]);const axis=Number(a);const sphere=Number(s),cyl=Number(c);if(Number.isFinite(sphere)&&Number.isFinite(cyl)&&axis>=1&&axis<=180)triples.push([formatPower(s),formatPower(c),String(axis)])}
         return triples;
       };
+      const bracketRows=[...normalized.matchAll(/<\s*([^<>\n]{1,160}?)\s*>/g)].flatMap(match=>parseLine(match[1].replace(/\s+/g,' ').trim()));
+      if(bracketRows.length>=2)return bracketRows.slice(0,2);
       normalized.split('\n').map(v=>v.replace(/\s+/g,' ').trim()).filter(Boolean).forEach(line=>{
         const triples=parseLine(line);if(!triples.length)return;
         const hasOD=/(?:\bOD\b|O\.D\.?|\bRE\b|RIGHT|\bR\b)/i.test(line),hasOS=/(?:\bOS\b|O\.S\.?|\bLE\b|LEFT|\bL\b)/i.test(line);
