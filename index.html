@@ -15,6 +15,7 @@
     .vac-grid{display:grid;grid-template-columns:1fr;gap:4px}.rx-label{margin-top:12px}.rx-display{width:100%;margin-top:5px;border:1px solid var(--line);border-radius:10px;padding:11px 8px;font:inherit;font-weight:750;color:var(--teal);background:#f1faf7}.summary-card{background:#fbfefd}.summary-lines{white-space:pre-wrap;padding:4px 0;font-weight:800;line-height:1.7}
     .rx-sheet{background:#fff;border:1px solid #b9c9c5;padding:24px;margin-top:12px}.rx-sheet h2{text-align:center;margin:0 0 18px;font-size:22px}.rx-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}.rx-meta label{font-size:12px;color:var(--muted);font-weight:800;display:block;margin-bottom:4px}.rx-meta input{width:100%;border:1px solid var(--line);border-radius:7px;padding:8px;font:inherit}.rx-table{width:100%;border-collapse:collapse;text-align:center}.rx-table th,.rx-table td{border:1px solid #9eafab;padding:10px 8px}.rx-table th{background:#edf6f3;font-size:13px}.rx-table td:first-child{text-align:left;font-weight:800}.rx-table input{width:100%;border:0;text-align:center;font:inherit;font-weight:750;background:transparent}.rx-print-btn{margin-top:14px;width:100%}
     .rx-signature{display:flex;align-items:center;gap:12px;margin-top:22px;font-weight:800}.rx-stamp-space{width:110px;height:58px;border:1px solid #9eafab;border-radius:4px;background:#fff}.rx-notes{margin-top:18px}.rx-notes-title{font-weight:800;margin-bottom:5px}.rx-notes textarea{width:100%;min-height:92px;border:1px solid var(--line);border-radius:7px;padding:9px;font:inherit;line-height:1.7;resize:vertical}
+    .rx-clinic{margin:0 0 16px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#f8fcfb}.rx-clinic label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:6px}.rx-clinic textarea{width:100%;min-height:54px;border:1px solid var(--line);border-radius:7px;padding:9px;font:inherit;resize:vertical}.rx-clinic .btn{margin-top:8px;width:100%}
     .vf-options{display:grid;gap:9px;margin-top:14px}.vf-options label{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}.vf-options input[type=checkbox]{width:18px;height:18px;accent-color:var(--teal)}.vf-options select{border:1px solid var(--line);border-radius:9px;padding:9px;font:inherit;margin-left:26px}.unit-input{display:flex;align-items:center;gap:8px}.unit-input input{flex:1}.unit-input span{color:var(--muted);font-weight:800}
     @media(max-width:390px){.fields{gap:6px}.field input{font-size:14px;padding:10px 5px}.title{font-size:25px}}
     @media(min-width:700px){.eyes-grid,.vac-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.eyes-grid .eye,.vac-grid .eye{margin-top:0}}
@@ -36,7 +37,7 @@
         <label class="btn ghost" for="ocrFile">拍照／選擇照片</label><input class="ocr-file" id="ocrFile" type="file" accept="image/*" capture="environment">
       </div>
       <div id="ocrStatus" class="ocr-status">請開啟鏡頭或選擇照片。</div>
-      <div class="ocr-preview"><video id="ocrVideo" autoplay="" playsinline="" muted=""></video><img id="ocrPhoto" alt="驗光單預覽"><div class="ocr-guide"></div></div>
+      <div class="ocr-preview"><video id="ocrVideo" autoplay="" playsinline="" muted=""></video><img id="ocrPhoto" alt="驗光單預覽" style="display: none;"><div class="ocr-guide"></div></div>
       <canvas id="ocrCanvas" hidden=""></canvas>
       <div id="ocrResult" class="ocr-result">尚未辨識</div>
     </section>
@@ -48,7 +49,7 @@
         <button class="btn ghost" id="syncReconnect" type="button">重新連線</button>
         <button class="btn ghost" id="syncClear" type="button">清除本次資料</button>
       </div>
-      <div id="syncStatus" class="ocr-status ok">公開同步已啟動，所有開啟同一網址的人會看到即時資料。</div>
+      <div id="syncStatus" class="ocr-status ok">本次同步資料已清除。</div>
     </section>
     <section class="card">
       <div class="result-head"><h2>眼壓 PT</h2><span class="confidence">單位：mmHg</span></div>
@@ -107,6 +108,7 @@
           <div class="no-print"><label>年齡（計算近距離度數）</label><input id="rxAge" type="number" min="1" max="120" inputmode="numeric" autocomplete="off"></div>
           <div><label>日期</label><input id="rxDate" type="date"></div>
         </div>
+        <div class="rx-clinic no-print"><label for="clinicData">門診資料輸入</label><textarea id="clinicData" placeholder="例如：Ref: OD: -1.25 -0.25x90 OS: -1.75 -0.50x90"></textarea><button class="btn secondary" id="importClinicData" type="button">帶入遠用驗光資料</button></div>
         <label class="no-print" style="display:block;margin-bottom:10px"><input id="rxNoNear" type="checkbox"> 不輸出近用資料</label>
         <table class="rx-table">
           <thead><tr><th>項目</th><th colspan="3">右眼 OD</th><th colspan="3">左眼 OS</th><th>PD</th></tr><tr><th></th><th>S / Sphere</th><th>C / Cylinder</th><th>Axis</th><th>S / Sphere</th><th>C / Cylinder</th><th>Axis</th><th>瞳距</th></tr></thead>
@@ -180,6 +182,12 @@
       if(lines[2]==='3. ')lines.splice(2,1);
       $('rxNotes').value=lines.join('\n');
     }
+    function importClinicData(){
+      const text=$('clinicData').value.replace(/[×＊*]/g,'x').replace(/[−—–]/g,'-');
+      const re=/OD\s*:\s*([-+]?\s*\d+(?:\.\d{1,2})?)\s+([-+]?\s*\d+(?:\.\d{1,2})?)\s*x\s*(\d{1,3})[\s,;]+OS\s*:\s*([-+]?\s*\d+(?:\.\d{1,2})?)\s+([-+]?\s*\d+(?:\.\d{1,2})?)\s*x\s*(\d{1,3})/i;
+      const m=text.match(re);if(!m){alert('找不到 Ref OD／OS 格式，請確認內容例如：Ref: OD: -1.25 -0.25x90 OS: -1.75 -0.50x90');return}
+      const values=[['rxOdS',m[1]],['rxOdC',m[2]],['rxOdA',m[3]],['rxOsS',m[4]],['rxOsC',m[5]],['rxOsA',m[6]]];values.forEach(([id,value])=>{$(id).value=value.replace(/\s+/g,'');rxManual[id]=true});updatePrescription();
+    }
     function dilateRx(eye){const f=id=>$(id).value.trim()||'—';return `${f('dilate'+eye+'S')} ${f('dilate'+eye+'C')} x${f('dilate'+eye+'A')}`}
     function updateSummary(){const f=id=>$(id).value.trim()||'—',lines=[`# ${today()}`];if(has(['odPT','osPT'])){const p=[];if(has(['odPT']))p.push(`OD: ${f('odPT')} mmHg`);if(has(['osPT']))p.push(`OS: ${f('osPT')} mmHg`);lines.push(`PT    ${p.join('  ')}`)}if(vfRx('od')||vfRx('os')){const p=[];if(vfRx('od'))p.push(`OD: ${vfRx('od')}`);if(vfRx('os'))p.push(`OS: ${vfRx('os')}`);lines.push(`Visual Field ${p.join('  ')}`)}if(has(['odS','odC','odA'])||has(['osS','osC','osA'])){const p=[];if(has(['odS','odC','odA']))p.push(`OD: ${rx('od')}`);if(has(['osS','osC','osA']))p.push(`OS: ${rx('os')}`);lines.push(`TVRM ${p.join('  ')}`)}if(has(['tvrmPD']))lines.push(`PD: ${f('tvrmPD')}`);if(has(['dilateODS','dilateODC','dilateODA','dilateOSS','dilateOSC','dilateOSA']))lines.push(`TVRM(dilate): OD: ${dilateRx('OD')}  OS: ${dilateRx('OS')}`);const odComplex=has(['odVAcC','odVAcS','odVAcCyl','odVAcAxis']),osComplex=has(['osVAcC','osVAcS','osVAcCyl','osVAcAxis']);if(has(['odVA','osVA'])&&!odComplex&&!osComplex){const p=[];if(has(['odVA']))p.push(`OD: ${f('odVA')}`);if(has(['osVA']))p.push(`OS: ${f('osVA')}`);lines.push(`VA ${p.join('  ')}`)}else if(has(['odVA','odVAcC'])||has(['osVA','osVAcC'])||odComplex||osComplex){const p=[];if(has(['odVA','odVAcC'])||odComplex)p.push(`OD: ${f('odVA')}(${f('odVAcC')}/${vaccRx('od')})`);if(has(['osVA','osVAcC'])||osComplex)p.push(`OS: ${f('osVA')}(${f('osVAcC')}/${vaccRx('os')})`);lines.push(`VAcC ${p.join('  ')}`)}if(has(['odVAcPG','osVAcPG'])){const p=[];if(has(['odVAcPG']))p.push(`OD: ${f('odVAcPG')}`);if(has(['osVAcPG']))p.push(`OS: ${f('osVAcPG')}`);lines.push(`VAcPG ${p.join('  ')}`)}if(has(['odWS','odWC','odWA'])||has(['osWS','osWC','osWA'])){const p=[];if(has(['odWS','odWC','odWA']))p.push(`OD: ${wRx('od')}`);if(has(['osWS','osWC','osWA']))p.push(`OS: ${wRx('os')}`);lines.push(`W: ${p.join('  ')}`)}lines[lines.length-1]+=' #';$('summaryLines').textContent=lines.join('\n');updatePrescription()}
     function focusNext(id){const list=fields,i=list.indexOf(id);if(i>=0&&i<list.length-1)$(list[i+1]).focus()}
@@ -210,6 +218,7 @@
     $('rxAge').addEventListener('input',updatePrescription);
     $('rxDistancePD').addEventListener('input',updatePrescription);
     $('rxNoNear').addEventListener('change',updatePrescription);
+    $('importClinicData').addEventListener('click',importClinicData);
     rxEditable.forEach(id=>$(id).addEventListener('input',()=>rxManual[id]=true));
 
     // ── 手機／電腦點對點同步：只傳送辨識後數值，不傳送照片 ──
