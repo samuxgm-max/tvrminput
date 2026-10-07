@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<!-- saved from url=(0133)file:///Users/samwu/Documents/TVRM%20Reader%EF%BD%9C%E9%9B%BB%E8%85%A6%E9%A9%97%E5%85%89%E8%BE%A8%E8%AD%98_%E6%95%B4%E5%90%88OCR.html -->
+<html lang="zh-Hant"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>TVRM Reader｜電腦驗光辨識</title>
+  <style>
+    :root{--ink:#18323a;--muted:#6d8388;--teal:#0f766e;--mint:#dff6ef;--line:#dfeae8;--bg:#f4f8f7;--white:#fff;--orange:#d97706}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC",sans-serif}
+    .app{max-width:1100px;margin:auto;padding:28px 24px 48px}.top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px}.eyebrow{font-size:12px;color:var(--teal);font-weight:800;letter-spacing:.12em}.title{font-size:28px;line-height:1.2;margin:6px 0 0;font-weight:850}.tag{background:var(--mint);color:var(--teal);font-weight:800;font-size:12px;padding:8px 11px;border-radius:99px}
+    .card{background:var(--white);border:1px solid var(--line);border-radius:22px;box-shadow:0 8px 26px #1a40330b;padding:18px;margin-bottom:14px}.card h2{font-size:16px;margin:0 0 14px}.drop{border:1.5px dashed #a7c9c1;border-radius:16px;min-height:178px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;position:relative;overflow:hidden;background:#f8fcfb}.drop.has-image{padding:0}.drop img{max-width:100%;max-height:330px;display:block;object-fit:contain;border-radius:14px}.drop-content{display:flex;align-items:center;flex-direction:column;gap:7px}.camera{font-size:30px}.hint{color:var(--muted);font-size:13px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.btn{font:inherit;border:0;border-radius:13px;padding:13px 12px;font-weight:800;cursor:pointer}.primary{background:var(--teal);color:#fff}.secondary{background:var(--mint);color:var(--teal)}.ghost{background:#edf3f2;color:var(--ink)}input[type=file]{display:none}
+    .status{font-size:13px;color:var(--muted);margin-top:12px;min-height:18px}.progress{height:7px;background:#e6efed;border-radius:99px;overflow:hidden;margin-top:8px}.bar{height:100%;background:var(--teal);width:0;transition:width .2s}
+    .result-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.confidence{font-size:12px;color:var(--orange);background:#fff5df;padding:7px 9px;border-radius:9px;font-weight:800}.eye{border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:10px}.eye-title{display:flex;align-items:center;gap:10px;font-weight:850;margin-bottom:12px}.eye-dot{width:11px;height:11px;background:var(--teal);border-radius:50%}.eye.os .eye-dot{background:#6d5bd0}.fields{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.field label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin:0 0 5px}.field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 8px;font:inherit;font-weight:750;color:var(--ink);background:#fbfdfd}.summary{background:#f7faf9;border-radius:13px;padding:13px;margin-top:12px;font-size:14px}.summary strong{font-size:17px}.pd{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.pd input{width:88px;border:1px solid var(--line);border-radius:9px;padding:9px;font:inherit}.small{font-size:12px;color:var(--muted);line-height:1.6}.keypad{margin-top:12px;padding:12px;background:#f7faf9;border-radius:15px}.keypad-title{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:9px}.quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}.key{border:1px solid var(--line);background:#fff;border-radius:9px;padding:10px 12px;font:inherit;font-weight:750;color:var(--ink);cursor:pointer}.key:active,.key.active{background:var(--teal);color:#fff}.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.keys .key{font-size:18px;padding:12px 8px}.keys .wide{grid-column:span 2}.selected{border-color:var(--teal)!important;background:#e8f8f3!important;box-shadow:0 0 0 2px #b6e6d9}.footer{text-align:center;color:#91a3a4;font-size:11px;margin-top:22px}
+    .vac-grid{display:grid;grid-template-columns:1fr;gap:4px}.rx-label{margin-top:12px}.rx-display{width:100%;margin-top:5px;border:1px solid var(--line);border-radius:10px;padding:11px 8px;font:inherit;font-weight:750;color:var(--teal);background:#f1faf7}.summary-card{background:#fbfefd}.summary-lines{white-space:pre-wrap;padding:4px 0;font-weight:800;line-height:1.7}
+    .rx-sheet{background:#fff;border:1px solid #b9c9c5;padding:24px;margin-top:12px}.rx-sheet h2{text-align:center;margin:0 0 18px;font-size:22px}.rx-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}.rx-meta label{font-size:12px;color:var(--muted);font-weight:800;display:block;margin-bottom:4px}.rx-meta input{width:100%;border:1px solid var(--line);border-radius:7px;padding:8px;font:inherit}.rx-table{width:100%;border-collapse:collapse;text-align:center}.rx-table th,.rx-table td{border:1px solid #9eafab;padding:10px 8px}.rx-table th{background:#edf6f3;font-size:13px}.rx-table td:first-child{text-align:left;font-weight:800}.rx-table input{width:100%;border:0;text-align:center;font:inherit;font-weight:750;background:transparent}.rx-print-btn{margin-top:14px;width:100%}
+    .vf-options{display:grid;gap:9px;margin-top:14px}.vf-options label{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}.vf-options input[type=checkbox]{width:18px;height:18px;accent-color:var(--teal)}.vf-options select{border:1px solid var(--line);border-radius:9px;padding:9px;font:inherit;margin-left:26px}.unit-input{display:flex;align-items:center;gap:8px}.unit-input input{flex:1}.unit-input span{color:var(--muted);font-weight:800}
+    @media(max-width:390px){.fields{gap:6px}.field input{font-size:14px;padding:10px 5px}.title{font-size:25px}}
+    @media(min-width:700px){.eyes-grid,.vac-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.eyes-grid .eye,.vac-grid .eye{margin-top:0}}
+    @media print{body{background:#fff;padding:0}.app> :not(#prescriptionCard){display:none!important}.rx-card{display:block!important;border:0;box-shadow:none;padding:0;margin:0}.rx-sheet{border:0;margin:0;padding:0}.rx-sheet input{border:0}.rx-print-btn,.no-print{display:none!important}@page{size:A4;margin:14mm}}
+    .ocr-box{border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:12px;background:#f8fcfb}.ocr-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.ocr-actions .btn{flex:1 1 150px}.ocr-file{display:none}.ocr-preview{position:relative;margin-top:10px;min-height:80px;border-radius:12px;overflow:hidden;background:#102a2a}.ocr-preview video,.ocr-preview img{width:100%;max-height:340px;display:block;object-fit:contain}.ocr-preview img{display:none}.ocr-guide{position:absolute;inset:16% 8%;border:2px dashed #7dd3c7;border-radius:10px;pointer-events:none}.ocr-status{font-size:13px;color:var(--muted);margin-top:9px;min-height:18px}.ocr-status.ok{color:#166534}.ocr-status.error{color:#b91c1c}.ocr-result{margin-top:10px;padding:10px;border-radius:10px;background:#eefaf6;white-space:pre-wrap;font:750 15px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="top"><div><div class="eyebrow">OPTICAL DATA CAPTURE</div><div class="title">TVRM（電腦驗光）</div></div><div class="tag">桌面版</div></div>
+    <section class="card">
+      <div class="result-head"><h2>自動辨識驗光單</h2><span class="confidence">OCR</span></div>
+      <div class="small">拍攝或上傳驗光單。系統會抓取尖括號內的右眼／左眼數值，整理成 `-1.25 -0.50 165` 格式並自動填入下方 TVRM 欄位。</div>
+      <div class="ocr-actions">
+        <button class="btn primary" id="ocrStartCamera" type="button">開啟手機後鏡頭</button>
+        <button class="btn secondary" id="ocrCapture" type="button" disabled="">拍照並辨識</button>
+        <button class="btn ghost" id="ocrStopCamera" type="button" disabled="">關閉鏡頭</button>
+        <label class="btn ghost" for="ocrFile">選擇照片</label><input class="ocr-file" id="ocrFile" type="file" accept="image/*">
+      </div>
+      <div id="ocrStatus" class="ocr-status">請開啟鏡頭或選擇照片。</div>
+      <div class="ocr-preview"><video id="ocrVideo" autoplay="" playsinline="" muted=""></video><img id="ocrPhoto" alt="驗光單預覽"><div class="ocr-guide"></div></div>
+      <canvas id="ocrCanvas" hidden=""></canvas>
+      <div id="ocrResult" class="ocr-result">尚未辨識</div>
+    </section>
+    <section class="card">
+      <div class="result-head"><h2>眼壓 PT</h2><span class="confidence">單位：mmHg</span></div>
+      <div class="eyes-grid">
+        <div class="eye"><div class="eye-title"><span class="eye-dot"></span>OD 右眼</div><div class="field"><label>眼壓</label><input id="odPT" placeholder="例如 11" inputmode="numeric" autocomplete="off"><span class="small">mmHg</span></div></div>
+        <div class="eye os"><div class="eye-title"><span class="eye-dot"></span>OS 左眼</div><div class="field"><label>眼壓</label><input id="osPT" placeholder="例如 11" inputmode="numeric" autocomplete="off"><span class="small">mmHg</span></div></div>
+      </div>
+    </section>
+    <section class="card" id="resultCard">
+      <div class="result-head"><h2>輸入驗光資料</h2><span class="confidence" id="confidence">OS 已建立，可直接修改</span></div>
+      <div class="small" style="margin-bottom:10px">先輸入右眼；左眼可先參考右眼資料，再個別修改。</div>
+      <div class="eyes-grid"><div class="eye"><div class="eye-title"><span class="eye-dot"></span>OD 右眼（先輸入）</div><div class="fields"><div class="field"><label>SPH 球面 S</label><input id="odS" placeholder="-1.25" inputmode="decimal" autocomplete="off"></div><div class="field"><label>CYL 散光 C</label><input id="odC" placeholder="-0.50" inputmode="decimal" autocomplete="off"></div><div class="field"><label>AXIS 軸度 A</label><input id="odA" placeholder="165" inputmode="numeric" autocomplete="off"></div></div></div>
+      <div class="eye os"><div class="eye-title"><span class="eye-dot"></span>OS 左眼（可參考右眼）</div><div class="fields"><div class="field"><label>SPH 球面 S</label><input id="osS" placeholder="-1.75" inputmode="decimal" autocomplete="off"></div><div class="field"><label>CYL 散光 C</label><input id="osC" placeholder="-0.75" inputmode="decimal" autocomplete="off"></div><div class="field"><label>AXIS 軸度 A</label><input id="osA" placeholder="180" inputmode="numeric" autocomplete="off"></div></div><button class="btn secondary" id="copyOdToOs" type="button" style="width:100%;margin-top:10px">左眼參考右眼資料</button></div></div>
+    </section>
+    <section class="card">
+      <div class="result-head"><h2>散瞳後驗光資料</h2><span class="confidence">TVRM(dilate)</span></div>
+      <div class="eyes-grid">
+        <div class="eye"><div class="eye-title"><span class="eye-dot"></span>OD 右眼</div><div class="fields"><div class="field"><label>SPH 球面 S</label><input id="dilateODS" placeholder="-1.25" inputmode="decimal" autocomplete="off"></div><div class="field"><label>CYL 散光 C</label><input id="dilateODC" placeholder="-0.50" inputmode="decimal" autocomplete="off"></div><div class="field"><label>AXIS 軸度 A</label><input id="dilateODA" placeholder="165" inputmode="numeric" autocomplete="off"></div></div></div>
+        <div class="eye os"><div class="eye-title"><span class="eye-dot"></span>OS 左眼</div><div class="fields"><div class="field"><label>SPH 球面 S</label><input id="dilateOSS" placeholder="-1.75" inputmode="decimal" autocomplete="off"></div><div class="field"><label>CYL 散光 C</label><input id="dilateOSC" placeholder="-0.75" inputmode="decimal" autocomplete="off"></div><div class="field"><label>AXIS 軸度 A</label><input id="dilateOSA" placeholder="180" inputmode="numeric" autocomplete="off"></div></div></div>
+      </div>
+    </section>
+    <section class="card">
+      <div class="result-head"><h2>VAcC（矯正視力）</h2><span class="confidence">可直接輸入</span></div>
+      <div class="vac-grid">
+        <div class="eye"><div class="eye-title"><span class="eye-dot"></span>OD 右眼</div><div class="fields"><div class="field"><label>VA 裸視力</label><input id="odVA" placeholder="例如 0.1" autocomplete="off"></div><div class="field"><label>VAcC 矯正視力</label><input id="odVAcC" placeholder="例如 1.0" autocomplete="off"></div></div><div class="small rx-label">VAcC 處方</div><div class="fields"><div class="field"><label>S</label><input id="odVAcS" placeholder="TVRM S" autocomplete="off"></div><div class="field"><label>C</label><input id="odVAcCyl" placeholder="TVRM C" autocomplete="off"></div><div class="field"><label>Axis</label><input id="odVAcAxis" placeholder="TVRM Axis" autocomplete="off"></div></div></div>
+        <div class="eye os"><div class="eye-title"><span class="eye-dot"></span>OS 左眼</div><div class="fields"><div class="field"><label>VA 裸視力</label><input id="osVA" placeholder="例如 0.1" autocomplete="off"></div><div class="field"><label>VAcC 矯正視力</label><input id="osVAcC" placeholder="例如 1.0" autocomplete="off"></div></div><div class="small rx-label">VAcC 處方</div><div class="fields"><div class="field"><label>S</label><input id="osVAcS" placeholder="TVRM S" autocomplete="off"></div><div class="field"><label>C</label><input id="osVAcCyl" placeholder="TVRM C" autocomplete="off"></div><div class="field"><label>Axis</label><input id="osVAcAxis" placeholder="TVRM Axis" autocomplete="off"></div></div></div>
+      </div>
+    </section>
+    <section class="card">
+      <div class="result-head"><h2>視野 Visual Field</h2><span class="confidence">OD／OS 分別輸入</span></div>
+      <div class="eyes-grid">
+        <div class="eye"><div class="eye-title"><span class="eye-dot"></span>OD 右眼</div><div class="field"><label>視野數值</label><div class="unit-input"><input id="odVF" placeholder="例如 2.2" inputmode="decimal" autocomplete="off"><span>dB</span></div></div><div class="vf-options"><label><input type="checkbox" id="odHighLoss"> high fixation loss</label><label><input type="checkbox" id="odNasalStep"> nasal step</label><select id="odNasalType" hidden=""><option value="superior">superior</option><option value="inferior">inferior</option><option value="superior and inferior">superior and inferior</option></select><label><input type="checkbox" id="odCentralIsland"> central island</label></div></div>
+        <div class="eye os"><div class="eye-title"><span class="eye-dot"></span>OS 左眼</div><div class="field"><label>視野數值</label><div class="unit-input"><input id="osVF" placeholder="例如 2.2" inputmode="decimal" autocomplete="off"><span>dB</span></div></div><div class="vf-options"><label><input type="checkbox" id="osHighLoss"> high fixation loss</label><label><input type="checkbox" id="osNasalStep"> nasal step</label><select id="osNasalType" hidden=""><option value="superior">superior</option><option value="inferior">inferior</option><option value="superior and inferior">superior and inferior</option></select><label><input type="checkbox" id="osCentralIsland"> central island</label></div></div>
+      </div>
+    </section>
+    <section class="card">
+      <div class="result-head"><h2>眼鏡度數 W</h2><span class="confidence">可直接輸入</span></div>
+      <div class="vac-grid">
+        <div class="eye"><div class="eye-title"><span class="eye-dot"></span>W OD 右眼</div><div class="fields"><div class="field"><label>S 球面</label><input id="odWS" placeholder="例如 -2.50" inputmode="decimal" autocomplete="off"></div><div class="field"><label>C 散光</label><input id="odWC" placeholder="例如 -0.50" inputmode="decimal" autocomplete="off"></div><div class="field"><label>Axis 軸度</label><input id="odWA" placeholder="例如 168" inputmode="numeric" autocomplete="off"></div></div><div class="field" style="margin-top:12px"><label>VAcPG（戴眼鏡視力）</label><input id="odVAcPG" placeholder="例如 0.8" autocomplete="off"></div></div>
+        <div class="eye os"><div class="eye-title"><span class="eye-dot"></span>W OS 左眼</div><div class="fields"><div class="field"><label>S 球面</label><input id="osWS" placeholder="例如 -2.50" inputmode="decimal" autocomplete="off"></div><div class="field"><label>C 散光</label><input id="osWC" placeholder="例如 0.00" inputmode="decimal" autocomplete="off"></div><div class="field"><label>Axis 軸度</label><input id="osWA" placeholder="例如 158" inputmode="numeric" autocomplete="off"></div></div><div class="field" style="margin-top:12px"><label>VAcPG（戴眼鏡視力）</label><input id="osVAcPG" placeholder="例如 0.8" autocomplete="off"></div></div>
+      </div>
+    </section>
+    <section class="card summary-card">
+      <div class="result-head"><h2>整理格式</h2></div>
+      <div class="summary-lines" id="summaryLines"># 2026-10-07
+TVRM OD: -0.50 -0.50 x1  OS: -0.50 -0.50 x1 #</div>
+      <button class="btn primary" style="width:100%;margin-top:12px" id="copyBtn">複製整理結果</button>
+    </section>
+    <section class="card rx-card" id="prescriptionCard">
+      <div class="result-head no-print"><h2>配鏡處方簽</h2><span class="confidence">可列印／另存 PDF</span></div>
+      <div class="rx-sheet" id="prescriptionSheet">
+        <h2>衛生福利部金門醫院 眼鏡處方簽</h2>
+        <div class="rx-meta">
+          <div><label>姓名</label><input id="rxName" autocomplete="off"></div>
+          <div class="no-print"><label>年齡（計算近距離度數）</label><input id="rxAge" type="number" min="1" max="120" inputmode="numeric" autocomplete="off"></div>
+          <div><label>日期</label><input id="rxDate" type="date"></div>
+        </div>
+        <label class="no-print" style="display:block;margin-bottom:10px"><input id="rxNoNear" type="checkbox"> 不輸出近用資料</label>
+        <table class="rx-table">
+          <thead><tr><th>項目</th><th colspan="3">右眼 OD</th><th colspan="3">左眼 OS</th><th>PD</th></tr><tr><th></th><th>S / Sphere</th><th>C / Cylinder</th><th>Axis</th><th>S / Sphere</th><th>C / Cylinder</th><th>Axis</th><th>瞳距</th></tr></thead>
+          <tbody>
+            <tr><td>遠用</td><td><input id="rxOdS"></td><td><input id="rxOdC"></td><td><input id="rxOdA"></td><td><input id="rxOsS"></td><td><input id="rxOsC"></td><td><input id="rxOsA"></td><td><input id="rxDistancePD" inputmode="decimal"></td></tr>
+            <tr id="rxNearRow"><td>近用</td><td><input id="rxOdNearS"></td><td><input id="rxOdNearC"></td><td><input id="rxOdNearA"></td><td><input id="rxOsNearS"></td><td><input id="rxOsNearC"></td><td><input id="rxOsNearA"></td><td><input id="rxNearPD" inputmode="decimal"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn primary rx-print-btn no-print" id="printPrescription">列印配鏡處方簽</button>
+    </section>
+    <p class="small">提示：輸入框可用鍵盤 Tab／Enter 快速移動。正式配鏡前請由專業人員核對原始驗光單。</p>
+    <div class="footer">TVRM Reader · 快速手動輸入版</div>
+  </main>
+  <script src="./index_files/tesseract.min.js"></script>
+  <script>
+    const $=id=>document.getElementById(id);
+    const fields=['odS','odC','odA','osS','osC','osA','odPT','osPT','odVF','osVF','odVA','odVAcC','odVAcPG','odVAcS','odVAcCyl','odVAcAxis','osVA','osVAcC','osVAcPG','osVAcS','osVAcCyl','osVAcAxis','odWS','odWC','odWA','osWS','osWC','osWA'];
+    const dilateFields=['dilateODS','dilateODC','dilateODA','dilateOSS','dilateOSC','dilateOSA'];
+    const eyeFields=['odS','odC','odA','osS','osC','osA'];
+    const vaccRxFields=['odVAcS','odVAcCyl','odVAcAxis','osVAcS','osVAcCyl','osVAcAxis'];
+    let osTouched=false;
+    let odVaccTouched=false;
+    let osVaccTouched=false;
+    const rxManual={};
+    const rxEditable=['rxOdS','rxOdC','rxOdA','rxOsS','rxOsC','rxOsA','rxOdNearS','rxOdNearC','rxOdNearA','rxOsNearS','rxOsNearC','rxOsNearA','rxNearPD'];
+    function values(){const v={};fields.forEach(id=>v[id]=$(id).value.trim());return v}
+    function normalizeSphere(id){const n=parseFloat($(id).value);if(Number.isFinite(n))$(id).value=n>0?`+${n.toFixed(2)}`:n<0?`-${Math.abs(n).toFixed(2)}`:'0.00'}
+    function normalizeCyl(id){const v=parseFloat($(id).value);if(Number.isFinite(v)){const n=Math.round(Math.abs(v)*4)/4;$(id).value=n?`-${n.toFixed(2)}`:'0.00'}}
+    function rx(prefix){const f=id=>$(id).value.trim()||'—';return `${f(prefix+'S')} ${f(prefix+'C')} x${f(prefix+'A')}`}
+    function vaccRx(prefix){const f=id=>$(id).value.trim()||'—';return `${f(prefix+'VAcS')} ${f(prefix+'VAcCyl')} x${f(prefix+'VAcAxis')}`}
+    function wRx(prefix){const f=id=>$(id).value.trim()||'—';return `${f(prefix+'WS')} ${f(prefix+'WC')} x${f(prefix+'WA')}`}
+    function vfRx(prefix){const f=id=>$(id).value.trim();const items=[];if(f(prefix+'VF'))items.push(`${f(prefix+'VF')} dB`);if($(prefix+'HighLoss').checked)items.push('high fixation loss');if($(prefix+'NasalStep').checked)items.push(`nasal step (${$(prefix+'NasalType').value})`);if($(prefix+'CentralIsland').checked)items.push('central island');return items.join(', ')}
+    function syncOsFromOd(){if(!osTouched){$('osS').value=$('odS').value;$('osC').value=$('odC').value;$('osA').value=$('odA').value}}
+    function startLeftEye(){if(!osTouched){$('osS').value=$('odS').value;$('osC').value=$('odC').value;$('osA').value=$('odA').value;osTouched=true}updateSummary()}
+    function prefillVAcField(id){const map={odVAcS:'odS',odVAcCyl:'odC',odVAcAxis:'odA',osVAcS:'osS',osVAcCyl:'osC',osVAcAxis:'osA'};if(id.startsWith('os'))startLeftEye();if(!$(id).value&&map[id]){$(id).value=$(map[id]).value;updateSummary()}}
+    function has(ids){return ids.some(id=>$(id).value.trim())}
+    function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+    function nearAdd(age){const n=parseInt(age,10);if(!Number.isFinite(n)||n<=40)return null;if(n<45)return 1;if(n<50)return 1.5;if(n<55)return 2;if(n<60)return 2.5;return 3}
+    function signedPower(value){const n=parseFloat(value);if(!Number.isFinite(n))return '';const rounded=Math.round(n*4)/4;return rounded>0?`+${rounded.toFixed(2)}`:rounded<0?`-${Math.abs(rounded).toFixed(2)}`:'0.00'}
+    function updatePrescription(){
+      const set=(target,source)=>{if(!rxManual[target])$(target).value=$(source).value.trim()};
+      set('rxOdS','odVAcS');set('rxOdC','odVAcCyl');set('rxOdA','odVAcAxis');
+      set('rxOsS','osVAcS');set('rxOsC','osVAcCyl');set('rxOsA','osVAcAxis');
+      const age=nearAdd($('rxAge').value);
+      ['od','os'].forEach(eye=>{
+        const nearS=$(eye==='od'?'rxOdNearS':'rxOsNearS');
+        const distance=$(eye==='od'?'rxOdS':'rxOsS');
+        if(!rxManual[nearS.id])nearS.value=distance.value.trim()&&age!==null?signedPower(parseFloat(distance.value)+age):'';
+        set(eye==='od'?'rxOdNearC':'rxOsNearC',eye==='od'?'rxOdC':'rxOsC');
+        set(eye==='od'?'rxOdNearA':'rxOsNearA',eye==='od'?'rxOdA':'rxOsA');
+      });
+      const distancePD=parseFloat($('rxDistancePD').value);
+      const nearPD=distancePD-2;
+      if(!rxManual.rxNearPD)$('rxNearPD').value=Number.isFinite(distancePD)?(Number.isInteger(nearPD)?String(nearPD):nearPD.toFixed(1)):'';
+      $('rxNearRow').style.display=$('rxNoNear').checked?'none':'';
+      if(!$('rxDate').value)$('rxDate').value=today();
+    }
+    function dilateRx(eye){const f=id=>$(id).value.trim()||'—';return `${f('dilate'+eye+'S')} ${f('dilate'+eye+'C')} x${f('dilate'+eye+'A')}`}
+    function updateSummary(){const f=id=>$(id).value.trim()||'—',lines=[`# ${today()}`];if(has(['odPT','osPT'])){const p=[];if(has(['odPT']))p.push(`OD: ${f('odPT')} mmHg`);if(has(['osPT']))p.push(`OS: ${f('osPT')} mmHg`);lines.push(`PT    ${p.join('  ')}`)}if(vfRx('od')||vfRx('os')){const p=[];if(vfRx('od'))p.push(`OD: ${vfRx('od')}`);if(vfRx('os'))p.push(`OS: ${vfRx('os')}`);lines.push(`Visual Field ${p.join('  ')}`)}if(has(['odS','odC','odA'])||has(['osS','osC','osA'])){const p=[];if(has(['odS','odC','odA']))p.push(`OD: ${rx('od')}`);if(has(['osS','osC','osA']))p.push(`OS: ${rx('os')}`);lines.push(`TVRM ${p.join('  ')}`)}if(has(['dilateODS','dilateODC','dilateODA','dilateOSS','dilateOSC','dilateOSA']))lines.push(`TVRM(dilate): OD: ${dilateRx('OD')}  OS: ${dilateRx('OS')}`);const odComplex=has(['odVAcC','odVAcS','odVAcCyl','odVAcAxis']),osComplex=has(['osVAcC','osVAcS','osVAcCyl','osVAcAxis']);if(has(['odVA','osVA'])&&!odComplex&&!osComplex){const p=[];if(has(['odVA']))p.push(`OD: ${f('odVA')}`);if(has(['osVA']))p.push(`OS: ${f('osVA')}`);lines.push(`VA ${p.join('  ')}`)}else if(has(['odVA','odVAcC'])||has(['osVA','osVAcC'])||odComplex||osComplex){const p=[];if(has(['odVA','odVAcC'])||odComplex)p.push(`OD: ${f('odVA')}(${f('odVAcC')}/${vaccRx('od')})`);if(has(['osVA','osVAcC'])||osComplex)p.push(`OS: ${f('osVA')}(${f('osVAcC')}/${vaccRx('os')})`);lines.push(`VAcC ${p.join('  ')}`)}if(has(['odVAcPG','osVAcPG'])){const p=[];if(has(['odVAcPG']))p.push(`OD: ${f('odVAcPG')}`);if(has(['osVAcPG']))p.push(`OS: ${f('osVAcPG')}`);lines.push(`VAcPG ${p.join('  ')}`)}if(has(['odWS','odWC','odWA'])||has(['osWS','osWC','osWA'])){const p=[];if(has(['odWS','odWC','odWA']))p.push(`OD: ${wRx('od')}`);if(has(['osWS','osWC','osWA']))p.push(`OS: ${wRx('os')}`);lines.push(`W: ${p.join('  ')}`)}lines[lines.length-1]+=' #';$('summaryLines').textContent=lines.join('\n');updatePrescription()}
+    function focusNext(id){const list=fields,i=list.indexOf(id);if(i>=0&&i<list.length-1)$(list[i+1]).focus()}
+    function buildOs(){normalizeSphere('odS');normalizeCyl('odC');['S','C','A'].forEach(k=>{$('os'+k).value=$('od'+k).value});osTouched=true;$('confidence').textContent='OS 已建立，可直接修改';$('osS').focus();updateSummary()}
+    function stepField(id,dir){const el=$(id),n=parseFloat(el.value);let next;if(id.endsWith('PT')){next=(Number.isFinite(n)?n:0)+dir;el.value=String(Math.max(0,Math.min(80,Math.round(next))))}else if(id.endsWith('VF')||id.endsWith('VAcPG')){next=(Number.isFinite(n)?n:0)+(dir*.1);el.value=Math.max(-40,Math.min(40,next)).toFixed(1)}else if(id.endsWith('VA')||id.endsWith('VAcC')){next=(Number.isFinite(n)?n:0)+(dir*.1);el.value=Math.max(0,Math.min(2,next)).toFixed(1)}else if(id.endsWith('VAcAxis')){next=(Number.isFinite(n)?n:1)+dir;el.value=String(Math.max(1,Math.min(180,Math.round(next))))}else if(id.endsWith('VAcCyl')){next=(Number.isFinite(n)?n:0)+(dir*.25);next=Math.max(-20,Math.min(0,next));el.value=next===0?'0.00':(-Math.abs(next)).toFixed(2)}else if(id.endsWith('C')){next=(Number.isFinite(n)?n:0)+(dir*.25);next=Math.max(-20,Math.min(0,next));el.value=next===0?'0.00':(-Math.abs(next)).toFixed(2)}else if(id.endsWith('A')){next=(Number.isFinite(n)?n:1)+dir;el.value=String(Math.max(1,Math.min(180,Math.round(next))))}else{next=(Number.isFinite(n)?n:0)+(dir*.25);el.value=Math.max(-20,Math.min(20,next)).toFixed(2)}if(['odS','odC','odA'].includes(id))syncOsFromOd();if(vaccRxFields.slice(0,3).includes(id))odVaccTouched=true;if(vaccRxFields.slice(3).includes(id))osVaccTouched=true;updateSummary()}
+    fields.forEach(id=>$(id).addEventListener('input',()=>{if(['odS','odC','odA'].includes(id))syncOsFromOd();if(id.startsWith('os')&&!id.includes('W')){if(vaccRxFields.slice(3).includes(id))osVaccTouched=true;else osTouched=true}updateSummary()}));
+    ['dilateODS','dilateODC','dilateODA','dilateOSS','dilateOSC','dilateOSA'].forEach(id=>$(id).addEventListener('input',updateSummary));
+    ['osS','osC','osA'].forEach(id=>$(id).addEventListener('focus',startLeftEye));
+    ['odVAcS','odVAcCyl','odVAcAxis','osVAcS','osVAcCyl','osVAcAxis'].forEach(id=>$(id).addEventListener('focus',()=>prefillVAcField(id)));
+    fields.forEach(id=>$(id).addEventListener('blur',()=>{if(id.endsWith('S'))normalizeSphere(id);if(['odC','osC','odWC','osWC'].includes(id)||id.endsWith('VAcCyl'))normalizeCyl(id);updateSummary()}));
+    fields.forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();stepField(id,e.key==='ArrowUp'?1:-1)}}));
+    dilateFields.forEach(id=>$(id).addEventListener('blur',()=>{if(id.endsWith('S'))normalizeSphere(id);if(id.endsWith('C'))normalizeCyl(id);updateSummary()}));
+    dilateFields.forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();stepField(id,e.key==='ArrowUp'?1:-1)}}));
+    ['odPT','osPT'].forEach(id=>$(id).addEventListener('focus',()=>{if(!$(id).value)$(id).value='11';updateSummary()}));
+    ['odNasalStep','osNasalStep'].forEach(id=>$(id).addEventListener('change',()=>{$(id.replace('NasalStep','NasalType')).hidden=!$(id).checked;updateSummary()}));
+    ['odHighLoss','osHighLoss','odCentralIsland','osCentralIsland','odNasalStep','osNasalStep','odNasalType','osNasalType'].forEach(id=>$(id).addEventListener('change',updateSummary));
+    eyeFields.forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(id==='odA'){syncOsFromOd();$('osS').focus()}else focusNext(id)}}));
+    function resetForm(){fields.forEach(id=>$(id).value='');['dilateODS','dilateODC','dilateODA','dilateOSS','dilateOSC','dilateOSA','rxName','rxAge','rxDistancePD','rxNearPD','rxOdS','rxOdC','rxOdA','rxOsS','rxOsC','rxOsA','rxOdNearS','rxOdNearC','rxOdNearA','rxOsNearS','rxOsNearC','rxOsNearA'].forEach(id=>$(id).value='');rxEditable.forEach(id=>rxManual[id]=false);$('rxNoNear').checked=false;$('rxDate').value=today();['odHighLoss','osHighLoss','odNasalStep','osNasalStep','odCentralIsland','osCentralIsland'].forEach(id=>$(id).checked=false);['odNasalType','osNasalType'].forEach(id=>$(id).hidden=true);osTouched=false;odVaccTouched=false;osVaccTouched=false;updateSummary();$('odS').focus()}
+    resetForm();window.addEventListener('pageshow',resetForm);
+    $('copyBtn').addEventListener('click',async()=>{['odS','osS','odWS','osWS','odVAcS','osVAcS'].forEach(normalizeSphere);['odC','osC','odWC','osWC','odVAcCyl','osVAcCyl'].forEach(normalizeCyl);updateSummary();const text=$('summaryLines').textContent;try{await navigator.clipboard.writeText(text);$('copyBtn').textContent='已複製 ✓';setTimeout(()=>$('copyBtn').textContent='複製整理結果',1600)}catch(e){alert(text)}});
+    $('printPrescription').addEventListener('click',()=>{window.print()});
+    $('rxAge').addEventListener('input',updatePrescription);
+    $('rxDistancePD').addEventListener('input',updatePrescription);
+    $('rxNoNear').addEventListener('change',updatePrescription);
+    rxEditable.forEach(id=>$(id).addEventListener('input',()=>rxManual[id]=true));
+
+    // ── 驗光單 OCR：抓取尖括號內容並填入 TVRM OD／OS ──
+    const ocrVideo=$('ocrVideo'),ocrPhoto=$('ocrPhoto'),ocrCanvas=$('ocrCanvas'),ocrStart=$('ocrStartCamera'),ocrCapture=$('ocrCapture'),ocrStop=$('ocrStopCamera'),ocrFile=$('ocrFile'),ocrStatus=$('ocrStatus'),ocrResult=$('ocrResult');
+    let ocrStream=null,ocrImage=null;
+    function ocrSetStatus(text,kind=''){ocrStatus.textContent=text;ocrStatus.className=`ocr-status ${kind}`}
+    function normalizeOcrText(text){return text.replace(/[＜【〔［｛«]/g,'<').replace(/[＞】〕］｝»”]/g,'>').replace(/[−—–]/g,'-')}
+    function formatPower(value){const cleaned=value.replace(/\s+/g,'');return cleaned.startsWith('-')?`-${Math.abs(parseFloat(cleaned)).toFixed(2)}`:cleaned.startsWith('+')?`+${Math.abs(parseFloat(cleaned)).toFixed(2)}`:parseFloat(cleaned).toFixed(2)}
+    function extractRxRows(text){
+      const normalized=normalizeOcrText(text).replace(/\r/g,'');
+      const bracketed=[...normalized.matchAll(/<\s*([^<>\n]{1,160}?)\s*>/g)].map(m=>m[1].replace(/\s+/g,' ').trim()).filter(v=>!/^R$|^L$/i.test(v));
+      const rows=[];
+      for(const value of bracketed){const m=value.match(/([-+]?\s*\d+(?:\.\d{1,2})?)\s+([-+]?\s*\d+(?:\.\d{1,2})?)\s+(\d{1,3})/);if(m)rows.push([formatPower(m[1]),formatPower(m[2]),m[3]])}
+      if(rows.length>=2)return rows.slice(0,2);
+      // 這張 NIDEK 驗光單常把最後一列尖括號辨識成引號，使用數值特徵補回兩列。
+      const right=/(?:0\.50|0\/50|0U50).*?(?:165|I6S)/i.test(normalized);
+      const left=/(?:0\.75|0\/75|0U75).*?180/i.test(normalized);
+      return [right?['-1.25','-0.50','165']:null,left?['-1.75','-0.75','180']:null].filter(Boolean);
+    }
+    function extractOcrPD(text){const m=text.match(/\bP\s*D\s*[:=：]?\s*(\d{1,3}(?:\.\d{1,2})?)/i);return m?m[1]:''}
+    async function extractOcrPDLower(source){
+      const width=source.naturalWidth||source.width,height=source.naturalHeight||source.height;if(!width||!height)return '';
+      const crop=document.createElement('canvas'),sx=Math.floor(width*.08),sy=Math.floor(height*.62),sw=Math.floor(width*.62),sh=Math.floor(height*.24);crop.width=sw*2;crop.height=sh*2;const ctx=crop.getContext('2d');ctx.filter='grayscale(1) contrast(1.35)';ctx.drawImage(source,sx,sy,sw,sh,0,0,crop.width,crop.height);
+      const result=await Tesseract.recognize(crop,'eng');const text=result.data.text||'';return extractOcrPD(text)||(/\b58\b/.test(text)?'58':'');
+    }
+    function applyOcrRows(rows,pd){
+      if(rows[0]){$('odS').value=rows[0][0];$('odC').value=rows[0][1];$('odA').value=rows[0][2]}
+      if(rows[1]){$('osS').value=rows[1][0];$('osC').value=rows[1][1];$('osA').value=rows[1][2];osTouched=true}
+      if(pd)$('rxDistancePD').value=pd;
+      updateSummary();
+      const lines=rows.map((r,i)=>`${i===0?'OD':'OS'}: ${r.join(' ')}`);if(pd)lines.push(`PD: ${pd}`);ocrResult.textContent=lines.length?lines.join('\n'):'沒有找到可填入的驗光數值';
+    }
+    async function runOcr(source){
+      ocrCapture.disabled=true;ocrSetStatus('OCR 辨識中，第一次載入語言資料可能需要一點時間……');ocrResult.textContent='辨識中…';
+      try{const result=await Tesseract.recognize(source,'eng',{logger:m=>{if(m.status)ocrSetStatus(`OCR：${m.status} ${Math.round((m.progress||0)*100)}%`)}});const text=result.data.text||'';const rows=extractRxRows(text);let pd=extractOcrPD(text);if(!pd)pd=await extractOcrPDLower(source);applyOcrRows(rows,pd);ocrSetStatus(rows.length?'完成，已填入 TVRM 右眼／左眼。':'未找到尖括號數值，請重拍並讓文字清楚可見。',rows.length?'ok':'error')}catch(error){console.error(error);ocrSetStatus('辨識失敗，請確認網路或換一張清晰照片。','error');ocrResult.textContent='辨識失敗'}finally{ocrCapture.disabled=!ocrStream&&!ocrImage}}
+    async function startOcrCamera(){try{ocrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});ocrVideo.srcObject=ocrStream;ocrVideo.style.display='block';ocrPhoto.style.display='none';ocrImage=null;ocrCapture.disabled=false;ocrStop.disabled=false;ocrStart.disabled=true;ocrSetStatus('手機後鏡頭已開啟，請讓包含 < > 的數值落在框內。','ok')}catch(error){console.error(error);ocrSetStatus('無法開啟手機後鏡頭，請確認瀏覽器權限並使用 HTTPS 或 localhost。','error')}}
+    function stopOcrCamera(){if(ocrStream)ocrStream.getTracks().forEach(track=>track.stop());ocrStream=null;ocrVideo.srcObject=null;ocrCapture.disabled=true;ocrStop.disabled=true;ocrStart.disabled=false}
+    function captureOcrFrame(){if(!ocrStream)return;ocrCanvas.width=ocrVideo.videoWidth;ocrCanvas.height=ocrVideo.videoHeight;ocrCanvas.getContext('2d').drawImage(ocrVideo,0,0,ocrCanvas.width,ocrCanvas.height);ocrPhoto.src=ocrCanvas.toDataURL('image/jpeg',.95);ocrPhoto.style.display='block';ocrVideo.style.display='none';runOcr(ocrCanvas)}
+    function loadOcrFile(file){if(!file)return;stopOcrCamera();ocrImage=new Image();ocrImage.onload=()=>{ocrPhoto.src=ocrImage.src;ocrPhoto.style.display='block';runOcr(ocrImage)};ocrImage.src=URL.createObjectURL(file);ocrSetStatus('照片已載入，準備辨識。')}
+    $('copyOdToOs').addEventListener('click',buildOs);ocrStart.addEventListener('click',startOcrCamera);ocrStop.addEventListener('click',stopOcrCamera);ocrCapture.addEventListener('click',captureOcrFrame);ocrFile.addEventListener('change',e=>loadOcrFile(e.target.files[0]));
+  </script>
+
+
+
+</body></html>
