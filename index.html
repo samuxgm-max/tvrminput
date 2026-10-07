@@ -223,7 +223,7 @@
     const ocrVideo=$('ocrVideo'),ocrPhoto=$('ocrPhoto'),ocrCanvas=$('ocrCanvas'),ocrStart=$('ocrStartCamera'),ocrCapture=$('ocrCapture'),ocrStop=$('ocrStopCamera'),ocrFile=$('ocrFile'),ocrStatus=$('ocrStatus'),ocrResult=$('ocrResult');
     let ocrStream=null,ocrImage=null;
     function ocrSetStatus(text,kind=''){ocrStatus.textContent=text;ocrStatus.className=`ocr-status ${kind}`}
-    function normalizeOcrText(text){return text.replace(/[＜【〔［｛«]/g,'<').replace(/[＞】〕］｝»”]/g,'>').replace(/[−—–]/g,'-').replace(/[×＊*]/g,'x')}
+    function normalizeOcrText(text){return text.replace(/[＜〈【〔［｛«]/g,'<').replace(/[＞〉】〕］｝»”]/g,'>').replace(/[−—–]/g,'-').replace(/[×＊*]/g,'x')}
     function formatPower(value){const cleaned=value.replace(/\s+/g,'');return cleaned.startsWith('-')?`-${Math.abs(parseFloat(cleaned)).toFixed(2)}`:cleaned.startsWith('+')?`+${Math.abs(parseFloat(cleaned)).toFixed(2)}`:parseFloat(cleaned).toFixed(2)}
     function extractRxRows(text){
       const normalized=normalizeOcrText(text).replace(/\r/g,'');
@@ -232,11 +232,15 @@
       const parseLine=line=>{
         const triples=[];
         const re=/([-+]?\s*[0-9Oo]+(?:[.,][0-9Oo]{1,2})?)\s+([-+]?\s*[0-9Oo]+(?:[.,][0-9Oo]{1,2})?)\s*(?:x\s*)?([0-9IlOo]{1,3})(?![0-9])/gi;
-        for(const m of line.matchAll(re)){const s=cleanToken(m[1]),c=cleanToken(m[2]),a=cleanToken(m[3]);const axis=Number(a);const sphere=Number(s),cyl=Number(c);if(Number.isFinite(sphere)&&Number.isFinite(cyl)&&axis>=1&&axis<=180)triples.push([formatPower(s),formatPower(c),String(axis)])}
+        for(const m of line.matchAll(re)){const s=cleanToken(m[1]),c=cleanToken(m[2]),a=cleanToken(m[3]);const axis=Number(a);const sphere=Number(s),cyl=Number(c);if(Number.isFinite(sphere)&&Number.isFinite(cyl)&&Math.abs(sphere)<=30&&Math.abs(cyl)<=20&&axis>=1&&axis<=180)triples.push([formatPower(s),formatPower(c),String(axis)])}
         return triples;
       };
       const bracketRows=[...normalized.matchAll(/<\s*([^<>\n]{1,160}?)\s*>/g)].flatMap(match=>parseLine(match[1].replace(/\s+/g,' ').trim()));
-      if(bracketRows.length>=2)return bracketRows.slice(0,2);
+      if(bracketRows.length>=2)return bracketRows.slice(-2);
+      const rSection=normalized.match(/<\s*(?:R|OD)\s*>[\s\S]*?(?=<\s*(?:L|OS)\s*>)/i)?.[0]||'';
+      const lSection=normalized.match(/<\s*(?:L|OS)\s*>[\s\S]*/i)?.[0]||'';
+      const rRows=rSection.split('\n').flatMap(line=>parseLine(line)),lRows=lSection.split('\n').flatMap(line=>parseLine(line));
+      if(rRows.length&&lRows.length)return [rRows[rRows.length-1],lRows[lRows.length-1]];
       normalized.split('\n').map(v=>v.replace(/\s+/g,' ').trim()).filter(Boolean).forEach(line=>{
         const triples=parseLine(line);if(!triples.length)return;
         const hasOD=/(?:\bOD\b|O\.D\.?|\bRE\b|RIGHT|\bR\b)/i.test(line),hasOS=/(?:\bOS\b|O\.S\.?|\bLE\b|LEFT|\bL\b)/i.test(line);
@@ -246,7 +250,7 @@
       const rows=[];const seen=new Set();[labelled.OD,labelled.OS,...unlabelled].forEach(row=>{if(row&&!seen.has(row.join('|'))){seen.add(row.join('|'));rows.push(row)}});
       if(rows.length>=2)return rows.slice(0,2);
       // 若 OCR 漏掉標籤，保留原始尖括號與全文備援解析。
-      const fallback=[];for(const m of normalized.matchAll(/([-+]?\s*[0-9Oo]+(?:[.,][0-9Oo]{1,2})?)\s+([-+]?\s*[0-9Oo]+(?:[.,][0-9Oo]{1,2})?)\s*(?:x\s*)?([0-9IlOo]{1,3})(?![0-9])/gi)){const s=cleanToken(m[1]),c=cleanToken(m[2]),a=cleanToken(m[3]);if(Number(a)>=1&&Number(a)<=180)fallback.push([formatPower(s),formatPower(c),String(Number(a))])}
+      const fallback=[];for(const m of normalized.matchAll(/([-+]?\s*[0-9Oo]+(?:[.,][0-9Oo]{1,2})?)\s+([-+]?\s*[0-9Oo]+(?:[.,][0-9Oo]{1,2})?)\s*(?:x\s*)?([0-9IlOo]{1,3})(?![0-9])/gi)){const s=cleanToken(m[1]),c=cleanToken(m[2]),a=cleanToken(m[3]);if(Math.abs(Number(s))<=30&&Math.abs(Number(c))<=20&&Number(a)>=1&&Number(a)<=180)fallback.push([formatPower(s),formatPower(c),String(Number(a))])}
       return fallback.slice(0,2);
     }
     function extractOcrPD(text){const m=text.match(/\bP\s*D\s*[:=：]?\s*(\d{1,3}(?:\.\d{1,2})?)/i);return m?m[1]:''}
